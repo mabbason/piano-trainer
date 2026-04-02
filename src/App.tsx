@@ -7,6 +7,7 @@ import { FileLoader } from "./components/FileLoader";
 import { Controls } from "./components/Controls";
 import { SectionsPanel } from "./components/SectionsPanel";
 import { NotationPanel } from "./components/NotationPanel";
+import { Dashboard } from "./components/Dashboard";
 import { snapToMeasure, buildLoopRange } from "./utils/loop";
 import type { LoopRange } from "./utils/loop";
 import {
@@ -36,6 +37,7 @@ function App() {
   const [sectionProgress, setSectionProgress] = useState<SectionProgress[]>([]);
   const [showSections, setShowSections] = useState(true);
   const [showNotation, setShowNotation] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const rafRef = useRef<number>(0);
   const lastSectionRef = useRef<number>(-1);
   const practiceTimeRef = useRef<number>(0);
@@ -305,10 +307,28 @@ function App() {
     return () => cancelAnimationFrame(rafRef.current);
   }, [song, playback, isPlaying, loop, sections]);
 
-  if (!song) {
+  if (showDashboard) {
     return (
       <div className="h-screen bg-slate-900">
-        <FileLoader onFileLoad={handleFileLoad} />
+        <Dashboard onClose={() => setShowDashboard(false)} />
+      </div>
+    );
+  }
+
+  if (!song) {
+    return (
+      <div className="h-screen bg-slate-900 flex flex-col">
+        <div className="flex justify-end px-4 pt-3">
+          <button
+            onClick={() => setShowDashboard(true)}
+            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-sm"
+          >
+            Dashboard
+          </button>
+        </div>
+        <div className="flex-1">
+          <FileLoader onFileLoad={handleFileLoad} />
+        </div>
       </div>
     );
   }
