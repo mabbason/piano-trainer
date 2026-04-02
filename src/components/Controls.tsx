@@ -19,6 +19,8 @@ interface Props {
   onSetA: () => void;
   onSetB: () => void;
   onClearLoop: () => void;
+  showSections: boolean;
+  onToggleSections: () => void;
 }
 
 function formatTime(sec: number): string {
@@ -71,6 +73,8 @@ export function Controls({
   onSetA,
   onSetB,
   onClearLoop,
+  showSections,
+  onToggleSections,
 }: Props) {
   return (
     <div className="flex items-center gap-3 px-4 py-2 bg-slate-800 border-b border-slate-700">
@@ -207,6 +211,18 @@ export function Controls({
           </button>
         ))}
       </div>
+
+      <button
+        onClick={onToggleSections}
+        className={`px-2 py-1 rounded text-xs ${
+          showSections
+            ? "bg-cyan-600 text-white"
+            : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+        }`}
+        title={showSections ? "Hide sections panel" : "Show sections panel"}
+      >
+        Sections
+      </button>
     </div>
   );
 }
