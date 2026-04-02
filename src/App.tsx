@@ -6,6 +6,7 @@ import { WaterfallCanvas } from "./components/WaterfallCanvas";
 import { FileLoader } from "./components/FileLoader";
 import { Controls } from "./components/Controls";
 import { SectionsPanel } from "./components/SectionsPanel";
+import { NotationPanel } from "./components/NotationPanel";
 import { snapToMeasure, buildLoopRange } from "./utils/loop";
 import type { LoopRange } from "./utils/loop";
 import {
@@ -34,6 +35,7 @@ function App() {
   const [sections, setSections] = useState<Section[]>([]);
   const [sectionProgress, setSectionProgress] = useState<SectionProgress[]>([]);
   const [showSections, setShowSections] = useState(true);
+  const [showNotation, setShowNotation] = useState(false);
   const rafRef = useRef<number>(0);
   const lastSectionRef = useRef<number>(-1);
   const practiceTimeRef = useRef<number>(0);
@@ -334,6 +336,13 @@ function App() {
         onClearLoop={handleClearLoop}
         showSections={showSections}
         onToggleSections={() => setShowSections((p) => !p)}
+      />
+      <NotationPanel
+        song={song}
+        getCurrentTime={playback.getCurrentTime}
+        visibleHands={visibleHands}
+        expanded={showNotation}
+        onToggle={() => setShowNotation((p) => !p)}
       />
       <div className="flex-1 overflow-hidden relative flex">
         <div className="flex-1 relative">
