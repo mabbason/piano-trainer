@@ -81,6 +81,8 @@ function App() {
     }).catch(() => setAuthState("passphrase"));
   }, []);
 
+  const playback = usePlayback(song, visibleHands);
+
   // Browser back button support
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
@@ -94,7 +96,7 @@ function App() {
         setAuthState("user-picker");
       } else if (view === "song-select") {
         setShowDashboard(false);
-        playbackRef.current?.stop();
+        playback.stop();
         setSong(null);
         setIsPlaying(false);
         setIsFinished(false);
@@ -106,11 +108,7 @@ function App() {
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  const playback = usePlayback(song, visibleHands);
-  const playbackRef = useRef(playback);
-  playbackRef.current = playback;
+  }, [playback]);
 
   const currentSectionIndex = useMemo(
     () => (sections.length > 0 ? findCurrentSection(sections, currentTime) : 0),
