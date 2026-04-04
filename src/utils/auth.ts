@@ -10,6 +10,7 @@ export interface User {
 export interface AuthStatus {
   authenticated: boolean;
   userId: number | null;
+  avatar: string | null;
 }
 
 const opts: RequestInit = { credentials: "include" };
@@ -58,7 +59,7 @@ export async function fetchWithAuth(input: RequestInfo | URL, init?: RequestInit
 
 export async function checkAuth(): Promise<AuthStatus> {
   const res = await fetch(`${API_BASE}/api/auth/check`, opts);
-  if (!res.ok) return { authenticated: false, userId: null };
+  if (!res.ok) return { authenticated: false, userId: null, avatar: null };
   return res.json();
 }
 
@@ -106,6 +107,13 @@ export async function fetchUsers(): Promise<User[]> {
   const res = await fetchWithAuth(`${API_BASE}/api/users`);
   if (!res.ok) return [];
   return res.json();
+}
+
+export async function deleteUser(userId: number): Promise<{ ok: boolean; error?: string }> {
+  const res = await fetchWithAuth(`${API_BASE}/api/users/${userId}`, { method: "DELETE" });
+  const data = await res.json();
+  if (!res.ok) return { ok: false, error: data.error };
+  return { ok: true };
 }
 
 export async function createUser(name: string, avatar: string): Promise<User> {

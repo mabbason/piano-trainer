@@ -18,19 +18,21 @@ import {
   initProgress,
   findCurrentSection,
   markLearned as markSectionLearned,
+  unmarkLearned as unmarkSectionLearned,
   markPlayed,
   addPracticeTime,
   suggestNextStep,
 } from "./engine/sections";
 import type { Section, SectionProgress } from "./engine/sections";
 import { loadProgress, saveProgress, loadAllProgress } from "./utils/storage";
-import { checkAuth, setSessionExpiredHandler } from "./utils/auth";
+import { checkAuth, setSessionExpiredHandler, deleteUser, logout } from "./utils/auth";
 
 type AuthState = "checking" | "passphrase" | "user-picker" | "ready";
 
 function App() {
   const [authState, setAuthState] = useState<AuthState>("checking");
   const [userId, setUserId] = useState<number | null>(null);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [song, setSong] = useState<Song | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -50,28 +52,65 @@ function App() {
   const lastSectionRef = useRef<number>(-1);
   const practiceTimeRef = useRef<number>(0);
 
+  // Ref to suppress pushState during popstate handling
+  const skipPushRef = useRef(false);
+
   // Check auth on mount
   useEffect(() => {
     setSessionExpiredHandler(() => {
       setAuthState("passphrase");
       setUserId(null);
+      setUserAvatar(null);
       setSong(null);
     });
 
     checkAuth().then(async (status) => {
       if (!status.authenticated) {
         setAuthState("passphrase");
+        history.replaceState({ view: "passphrase" }, "");
       } else if (!status.userId) {
         setAuthState("user-picker");
+        history.replaceState({ view: "user-picker" }, "");
       } else {
         setUserId(status.userId);
+        setUserAvatar(status.avatar);
         await loadAllProgress(status.userId);
         setAuthState("ready");
+        history.replaceState({ view: "song-select" }, "");
       }
     }).catch(() => setAuthState("passphrase"));
   }, []);
 
+  // Browser back button support
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      const view = e.state?.view;
+      skipPushRef.current = true;
+      if (view === "user-picker") {
+        setShowDashboard(false);
+        setSong(null);
+        setUserId(null);
+        setUserAvatar(null);
+        setAuthState("user-picker");
+      } else if (view === "song-select") {
+        setShowDashboard(false);
+        playbackRef.current?.stop();
+        setSong(null);
+        setIsPlaying(false);
+        setIsFinished(false);
+        setCurrentTime(0);
+      } else if (view === "dashboard") {
+        setShowDashboard(true);
+      }
+      skipPushRef.current = false;
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   const playback = usePlayback(song, visibleHands);
+  const playbackRef = useRef(playback);
+  playbackRef.current = playback;
 
   const currentSectionIndex = useMemo(
     () => (sections.length > 0 ? findCurrentSection(sections, currentTime) : 0),
@@ -111,6 +150,9 @@ function App() {
       setLoopAMeasure(null);
       lastSectionRef.current = -1;
       practiceTimeRef.current = 0;
+      if (!skipPushRef.current) {
+        history.pushState({ view: "playing" }, "");
+      }
     },
     []
   );
@@ -159,23 +201,50 @@ function App() {
     setSpeed(1);
     setLoop(null);
     setLoopAMeasure(null);
+    if (!skipPushRef.current) {
+      history.pushState({ view: "song-select" }, "");
+    }
   }, [playback]);
 
   const handleMenuDashboard = useCallback(() => {
     setShowDashboard(true);
+    if (!skipPushRef.current) {
+      history.pushState({ view: "dashboard" }, "");
+    }
   }, []);
 
   const handleMenuSwitchUser = useCallback(() => {
     setShowDashboard(false);
     setSong(null);
     setUserId(null);
+    setUserAvatar(null);
     setAuthState("user-picker");
+    if (!skipPushRef.current) {
+      history.pushState({ view: "user-picker" }, "");
+    }
   }, []);
 
-  const handleMenuLogout = useCallback(() => {
+  const handleDeleteProfile = useCallback(async () => {
+    if (!userId) return;
+    const result = await deleteUser(userId);
+    if (result.ok) {
+      setShowDashboard(false);
+      setSong(null);
+      setUserId(null);
+      setUserAvatar(null);
+      setAuthState("user-picker");
+      if (!skipPushRef.current) {
+        history.pushState({ view: "user-picker" }, "");
+      }
+    }
+  }, [userId]);
+
+  const handleMenuLogout = useCallback(async () => {
+    await logout();
     setShowDashboard(false);
     setSong(null);
     setUserId(null);
+    setUserAvatar(null);
     setAuthState("passphrase");
   }, []);
 
@@ -249,6 +318,18 @@ function App() {
     [song, userId]
   );
 
+  const handleUnmarkLearned = useCallback(
+    (sectionIndex: number) => {
+      setSectionProgress((prev) => {
+        const next = [...prev];
+        next[sectionIndex] = unmarkSectionLearned(next[sectionIndex]);
+        if (song && userId) saveProgress(song.title, next, userId, true);
+        return next;
+      });
+    },
+    [song, userId]
+  );
+
   // Keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -285,14 +366,18 @@ function App() {
         case "KeyL":
           if (e.shiftKey) {
             e.preventDefault();
-            handleMarkLearned(currentSectionIndex);
+            if (sectionProgress[currentSectionIndex]?.mastery === "learned") {
+              handleUnmarkLearned(currentSectionIndex);
+            } else {
+              handleMarkLearned(currentSectionIndex);
+            }
           }
           break;
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [song, isPlaying, handlePlay, handlePause, handleSetA, handleSetB, handleClearLoop, handleJumpToSection, handleMarkLearned, currentSectionIndex, sections.length]);
+  }, [song, isPlaying, handlePlay, handlePause, handleSetA, handleSetB, handleClearLoop, handleJumpToSection, handleMarkLearned, handleUnmarkLearned, sectionProgress, currentSectionIndex, sections.length]);
 
   // Update current time, auto-loop, practice time tracking
   useEffect(() => {
@@ -370,10 +455,12 @@ function App() {
   if (authState === "user-picker") {
     return (
       <UserPicker
-        onUserSelected={async (id) => {
+        onUserSelected={async (id, avatar) => {
           setUserId(id);
+          setUserAvatar(avatar);
           await loadAllProgress(id);
           setAuthState("ready");
+          history.pushState({ view: "song-select" }, "");
         }}
         onLogout={() => setAuthState("passphrase")}
       />
@@ -385,6 +472,7 @@ function App() {
       <div className="h-screen bg-n-900">
         <Dashboard
           userId={userId!}
+          userAvatar={userAvatar}
           onClose={() => setShowDashboard(false)}
           onSwitchUser={() => {
             setShowDashboard(false);
@@ -392,6 +480,7 @@ function App() {
             setUserId(null);
             setAuthState("user-picker");
           }}
+          onDeleteProfile={handleDeleteProfile}
           onLogout={() => {
             setShowDashboard(false);
             setSong(null);
@@ -408,8 +497,10 @@ function App() {
       <div className="h-screen bg-n-900 flex flex-col">
         <div className="flex justify-end px-4 pt-3">
           <UserMenu
+            avatar={userAvatar}
             onDashboard={handleMenuDashboard}
             onSwitchUser={handleMenuSwitchUser}
+            onDeleteProfile={handleDeleteProfile}
             onLogout={handleMenuLogout}
           />
         </div>
@@ -444,8 +535,10 @@ function App() {
         onClearLoop={handleClearLoop}
         showSections={showSections}
         onToggleSections={() => setShowSections((p) => !p)}
+        userAvatar={userAvatar}
         onDashboard={handleMenuDashboard}
         onSwitchUser={handleMenuSwitchUser}
+        onDeleteProfile={handleDeleteProfile}
         onLogout={handleMenuLogout}
       />
       <NotationPanel
@@ -494,6 +587,7 @@ function App() {
             guidedStep={guidedStep}
             onJumpToSection={handleJumpToSection}
             onMarkLearned={handleMarkLearned}
+            onUnmarkLearned={handleUnmarkLearned}
           />
         )}
       </div>

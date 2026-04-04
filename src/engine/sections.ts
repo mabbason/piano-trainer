@@ -75,6 +75,10 @@ export function markLearned(progress: SectionProgress): SectionProgress {
   return { ...progress, mastery: "learned" };
 }
 
+export function unmarkLearned(progress: SectionProgress): SectionProgress {
+  return { ...progress, mastery: progress.playThroughCount > 0 ? "practiced" : "new" };
+}
+
 export function addPracticeTime(
   progress: SectionProgress,
   deltaSec: number

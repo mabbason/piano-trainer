@@ -31,13 +31,13 @@ interface Props {
 
 export function AvatarPicker({ selected, onSelect }: Props) {
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="flex flex-wrap justify-center gap-2">
       {AVATAR_KEYS.map((key) => (
         <button
           key={key}
           type="button"
           onClick={() => onSelect(key)}
-          className={`w-12 h-12 rounded-full text-2xl flex items-center justify-center transition-all ${
+          className={`w-11 h-11 rounded-full text-xl flex items-center justify-center transition-all ${
             selected === key
               ? "bg-purple-base ring-2 ring-purple-light scale-110"
               : "bg-n-700 hover:bg-n-600"

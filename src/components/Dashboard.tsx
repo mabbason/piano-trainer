@@ -6,8 +6,10 @@ import { UserMenu } from "./UserMenu";
 
 interface Props {
   userId: number;
+  userAvatar?: string | null;
   onClose: () => void;
   onSwitchUser: () => void;
+  onDeleteProfile?: () => void;
   onLogout: () => void;
 }
 
@@ -44,7 +46,7 @@ function ProgressBar({ value, max }: { value: number; max: number }) {
   );
 }
 
-export function Dashboard({ userId, onClose, onSwitchUser, onLogout }: Props) {
+export function Dashboard({ userId, userAvatar, onClose, onSwitchUser, onDeleteProfile, onLogout }: Props) {
   const [stats, setStats] = useState<SongStats[]>([]);
   const [totalTime, setTotalTime] = useState(0);
   const [songsStarted, setSongsStarted] = useState(0);
@@ -133,7 +135,9 @@ export function Dashboard({ userId, onClose, onSwitchUser, onLogout }: Props) {
             &times; Close
           </button>
           <UserMenu
+            avatar={userAvatar}
             onSwitchUser={onSwitchUser}
+            onDeleteProfile={onDeleteProfile}
             onLogout={onLogout}
           />
         </div>

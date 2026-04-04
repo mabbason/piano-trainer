@@ -23,8 +23,10 @@ interface Props {
   onClearLoop: () => void;
   showSections: boolean;
   onToggleSections: () => void;
+  userAvatar?: string | null;
   onDashboard: () => void;
   onSwitchUser: () => void;
+  onDeleteProfile?: () => void;
   onLogout: () => void;
 }
 
@@ -81,8 +83,10 @@ export function Controls({
   onClearLoop,
   showSections,
   onToggleSections,
+  userAvatar,
   onDashboard,
   onSwitchUser,
+  onDeleteProfile,
   onLogout,
 }: Props) {
   return (
@@ -245,8 +249,10 @@ export function Controls({
       </button>
 
       <UserMenu
+        avatar={userAvatar}
         onDashboard={onDashboard}
         onSwitchUser={onSwitchUser}
+        onDeleteProfile={onDeleteProfile}
         onLogout={onLogout}
       />
     </div>

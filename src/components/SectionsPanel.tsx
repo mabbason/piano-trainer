@@ -7,6 +7,7 @@ interface Props {
   guidedStep: GuidedStep;
   onJumpToSection: (sectionIndex: number) => void;
   onMarkLearned: (sectionIndex: number) => void;
+  onUnmarkLearned: (sectionIndex: number) => void;
 }
 
 const MASTERY_COLORS: Record<string, string> = {
@@ -42,6 +43,7 @@ export function SectionsPanel({
   guidedStep,
   onJumpToSection,
   onMarkLearned,
+  onUnmarkLearned,
 }: Props) {
   return (
     <div className="w-52 bg-n-800 border-l border-n-700 flex flex-col overflow-hidden">
@@ -79,11 +81,20 @@ export function SectionsPanel({
                 </div>
 
                 {prog.mastery === "learned" ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-brand-green-base shrink-0">
-                    <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2" />
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                    <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onUnmarkLearned(i);
+                    }}
+                    className="shrink-0 text-brand-green-base hover:text-n-500 transition-colors"
+                    title="Unmark as Learned"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2" />
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                      <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
                 ) : isCurrent ? (
                   <button
                     onClick={(e) => {
