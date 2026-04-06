@@ -5,8 +5,10 @@ import { usePlayback } from "./hooks/usePlayback";
 import { WaterfallCanvas } from "./components/WaterfallCanvas";
 import { FileLoader } from "./components/FileLoader";
 import { Controls } from "./components/Controls";
+import { MobileControlsHeader, MobileControlsTransport } from "./components/MobileControls";
 import { SectionsPanel } from "./components/SectionsPanel";
 import { NotationPanel } from "./components/NotationPanel";
+import { useIsMobile } from "./hooks/useIsMobile";
 import { Dashboard } from "./components/Dashboard";
 import { PassphraseGate } from "./components/PassphraseGate";
 import { UserPicker } from "./components/UserPicker";
@@ -48,6 +50,7 @@ function App() {
   const [showSections, setShowSections] = useState(true);
   const [showNotation, setShowNotation] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const isMobile = useIsMobile();
   const rafRef = useRef<number>(0);
   const lastSectionRef = useRef<number>(-1);
   const practiceTimeRef = useRef<number>(0);
@@ -509,6 +512,81 @@ function App() {
     );
   }
 
+  const finishedOverlay = isFinished && (
+    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+      <div className="text-center">
+        <p className="text-white text-2xl font-bold mb-4">Song Complete!</p>
+        <div className="flex gap-3 justify-center">
+          <button
+            onClick={handlePlay}
+            className="bg-purple-base hover:bg-purple-light text-white px-6 py-2 rounded font-medium"
+          >
+            Replay
+          </button>
+          <button
+            onClick={handleBack}
+            className="bg-n-700 hover:bg-n-600 text-white px-6 py-2 rounded"
+          >
+            New Song
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <div className="h-screen bg-n-900 flex flex-col">
+        <MobileControlsHeader
+          isPlaying={isPlaying}
+          songTitle={song.title}
+          currentTime={currentTime}
+          duration={song.durationSec}
+          speed={speed}
+          visibleHands={visibleHands}
+          loop={loop}
+          loopAMeasure={loopAMeasure}
+          samplerLoaded={playback.samplerLoaded}
+          onPlay={handlePlay}
+          onPause={handlePause}
+          onStop={handleStop}
+          onSpeedChange={handleSpeedChange}
+          onSeek={handleSeek}
+          onBack={handleBack}
+          onToggleHand={handleToggleHand}
+          onSetA={handleSetA}
+          onSetB={handleSetB}
+          onClearLoop={handleClearLoop}
+          userAvatar={userAvatar}
+          onDashboard={handleMenuDashboard}
+          onSwitchUser={handleMenuSwitchUser}
+          onDeleteProfile={handleDeleteProfile}
+          onLogout={handleMenuLogout}
+        />
+        <div className="flex-1 overflow-hidden relative">
+          <WaterfallCanvas
+            song={song}
+            getCurrentTime={playback.getCurrentTime}
+            getState={playback.getState}
+            visibleHands={visibleHands}
+            loop={loop}
+          />
+          {finishedOverlay}
+        </div>
+        <MobileControlsTransport
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={song.durationSec}
+          samplerLoaded={playback.samplerLoaded}
+          onPlay={handlePlay}
+          onPause={handlePause}
+          onStop={handleStop}
+          onSeek={handleSeek}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen bg-n-900 flex flex-col">
       <Controls
@@ -555,27 +633,7 @@ function App() {
             visibleHands={visibleHands}
             loop={loop}
           />
-          {isFinished && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-              <div className="text-center">
-                <p className="text-white text-2xl font-bold mb-4">Song Complete!</p>
-                <div className="flex gap-3 justify-center">
-                  <button
-                    onClick={handlePlay}
-                    className="bg-purple-base hover:bg-purple-light text-white px-6 py-2 rounded font-medium"
-                  >
-                    Replay
-                  </button>
-                  <button
-                    onClick={handleBack}
-                    className="bg-n-700 hover:bg-n-600 text-white px-6 py-2 rounded"
-                  >
-                    New Song
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          {finishedOverlay}
         </div>
         {showSections && sections.length > 0 && (
           <SectionsPanel

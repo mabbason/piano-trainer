@@ -58,9 +58,9 @@ export function UserPicker({ onUserSelected, onLogout }: Props) {
         <UserMenu onLogout={onLogout} />
       </div>
       <div className="h-full flex items-center justify-center">
-        <div className="w-full max-w-lg px-6">
+        <div className="w-full max-w-sm md:max-w-lg px-6">
         <div className="flex justify-center mb-2">
-          <img src="/logos/chorda-logo-white-full.png" alt="Chorda" className="h-40" />
+          <img src="/logos/chorda-logo-white-full.png" alt="Chorda" className="h-24 md:h-40" />
         </div>
         <p className="text-n-500 text-center text-sm mb-8">Who's playing?</p>
 
@@ -74,7 +74,7 @@ export function UserPicker({ onUserSelected, onLogout }: Props) {
                   key={user.id}
                   onClick={() => handleSelect(user.id, user.avatar)}
                   disabled={selecting !== null}
-                  className={`flex flex-col items-center justify-center gap-1 p-2 w-28 h-28 rounded-full transition-all ${
+                  className={`flex flex-col items-center justify-center gap-1 p-2 w-20 h-20 md:w-28 md:h-28 rounded-full transition-all ${
                     selecting === user.id
                       ? "bg-purple-base/30 ring-2 ring-purple-light"
                       : "bg-n-800 hover:bg-n-700"
@@ -92,7 +92,7 @@ export function UserPicker({ onUserSelected, onLogout }: Props) {
               {/* Add profile card */}
               <button
                 onClick={() => setShowAdd(true)}
-                className="flex flex-col items-center justify-center gap-1 w-28 h-28 rounded-full border-2 border-dashed border-n-700 hover:border-purple-light text-n-500 hover:text-purple-light transition-all"
+                className="flex flex-col items-center justify-center gap-1 w-20 h-20 md:w-28 md:h-28 rounded-full border-2 border-dashed border-n-700 hover:border-purple-light text-n-500 hover:text-purple-light transition-all"
               >
                 <span className="text-3xl">+</span>
                 <span className="text-sm">Add Profile</span>

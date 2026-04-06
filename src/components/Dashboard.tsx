@@ -148,7 +148,7 @@ export function Dashboard({ userId, userAvatar, onClose, onSwitchUser, onDeleteP
           <div className="text-center text-n-500 py-12">Loading...</div>
         ) : (
           <>
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-n-800 rounded-lg p-4 text-center">
                 <div className="text-2xl font-bold text-purple-light">
                   {formatTime(totalTime)}

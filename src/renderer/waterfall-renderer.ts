@@ -1,9 +1,14 @@
 import type { Song } from "../models/song";
 import type { LoopRange } from "../utils/loop";
 
-const KEYBOARD_HEIGHT = 112;
+const KEYBOARD_HEIGHT_DESKTOP = 112;
+const KEYBOARD_HEIGHT_MOBILE = 80;
 const VIEWPORT_AHEAD_SEC = 4;
 const VIEWPORT_BEHIND_SEC = 0.5; // less behind = notes land closer to keyboard
+
+function getKeyboardHeight(canvasHeight: number): number {
+  return canvasHeight < 500 ? KEYBOARD_HEIGHT_MOBILE : KEYBOARD_HEIGHT_DESKTOP;
+}
 
 // Keep in sync with brand palette in src/index.css @theme
 const RIGHT_HAND_COLOR = "#9768f8";   // purple-base
@@ -84,12 +89,13 @@ function drawKeyboard(
   width: number,
   height: number,
   range: KeyboardRange,
-  activeNotes: Map<number, string> // midi -> hand color
+  activeNotes: Map<number, string>, // midi -> hand color
+  kbHeight: number
 ) {
-  const keyboardY = height - KEYBOARD_HEIGHT;
+  const keyboardY = height - kbHeight;
   const whiteKeyWidth = width / range.whiteKeyCount;
   const blackKeyWidth = whiteKeyWidth * 0.65;
-  const blackKeyHeight = KEYBOARD_HEIGHT * 0.6;
+  const blackKeyHeight = kbHeight * 0.6;
 
   // Draw white keys
   let whiteIndex = 0;
@@ -102,20 +108,20 @@ function drawKeyboard(
       const handColor = activeNotes.get(m)!;
       // Draw white key base first
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x, keyboardY, whiteKeyWidth - 1, KEYBOARD_HEIGHT);
+      ctx.fillRect(x, keyboardY, whiteKeyWidth - 1, kbHeight);
       // Color wash over entire key
       ctx.fillStyle = handColor;
       ctx.globalAlpha = 0.55;
-      ctx.fillRect(x, keyboardY, whiteKeyWidth - 1, KEYBOARD_HEIGHT);
+      ctx.fillRect(x, keyboardY, whiteKeyWidth - 1, kbHeight);
       ctx.globalAlpha = 1.0;
     } else {
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(x, keyboardY, whiteKeyWidth - 1, KEYBOARD_HEIGHT);
+      ctx.fillRect(x, keyboardY, whiteKeyWidth - 1, kbHeight);
     }
 
     ctx.strokeStyle = "#dfe3ea";
     ctx.lineWidth = 0.5;
-    ctx.strokeRect(x, keyboardY, whiteKeyWidth - 1, KEYBOARD_HEIGHT);
+    ctx.strokeRect(x, keyboardY, whiteKeyWidth - 1, kbHeight);
 
     // Draw note name on wider keys
     if (whiteKeyWidth > 18) {
@@ -167,8 +173,8 @@ function drawKeyboard(
   ctx.stroke();
 }
 
-function drawPlayLine(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const y = height - KEYBOARD_HEIGHT;
+function drawPlayLine(ctx: CanvasRenderingContext2D, width: number, height: number, kbHeight: number) {
+  const y = height - kbHeight;
   // Glow effect
   ctx.shadowColor = "#fdd63b";
   ctx.shadowBlur = 6;
@@ -278,12 +284,13 @@ export function render(
     cachedSongTitle = song.title;
   }
   const range = cachedRange;
+  const kbHeight = getKeyboardHeight(height);
 
   // Clear
   ctx.fillStyle = "#141922";
   ctx.fillRect(0, 0, width, height);
 
-  const waterfallHeight = height - KEYBOARD_HEIGHT;
+  const waterfallHeight = height - kbHeight;
   const pixelsPerSec = waterfallHeight / (VIEWPORT_AHEAD_SEC + VIEWPORT_BEHIND_SEC);
   const viewStart = currentTimeSec - VIEWPORT_BEHIND_SEC;
   const viewEnd = currentTimeSec + VIEWPORT_AHEAD_SEC;
@@ -370,8 +377,8 @@ export function render(
   ctx.restore();
 
   // Draw play line
-  drawPlayLine(ctx, width, height);
+  drawPlayLine(ctx, width, height, kbHeight);
 
   // Draw keyboard
-  drawKeyboard(ctx, width, height, range, activeNotes);
+  drawKeyboard(ctx, width, height, range, activeNotes, kbHeight);
 }
