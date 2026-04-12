@@ -11,6 +11,7 @@ export interface SongResult {
   duration_sec: number;
   note_count: number;
   tempo_bpm: number;
+  source?: string;
 }
 
 import { fetchWithAuth } from "./auth";
@@ -36,6 +37,23 @@ export async function fetchSongMidi(id: string): Promise<ArrayBuffer> {
   const res = await fetchWithAuth(`${API_BASE}/api/songs/${encodeURIComponent(id)}/midi`);
   if (!res.ok) throw new Error("Failed to fetch MIDI");
   return res.arrayBuffer();
+}
+
+export async function importSong(buffer: ArrayBuffer, title: string): Promise<SongResult | null> {
+  try {
+    const res = await fetchWithAuth(
+      `${API_BASE}/api/songs/import?title=${encodeURIComponent(title)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/octet-stream" },
+        body: buffer,
+      }
+    );
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchGenres(): Promise<{ genre: string; count: number }[]> {

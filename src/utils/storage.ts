@@ -1,4 +1,33 @@
 import type { SectionProgress } from "../engine/sections";
+
+// --- Recent songs (localStorage) ---
+
+const RECENTS_KEY = "chorda_recent_songs";
+const MAX_RECENTS = 10;
+
+export interface RecentSong {
+  title: string;
+  source: "starter" | "library" | "imported";
+  fileKey?: string;    // starter: the .mid filename
+  songId?: string;     // library/imported: DB id
+  difficulty: number;  // 1-5
+  artist?: string;
+  ts: number;
+}
+
+export function getRecentSongs(): RecentSong[] {
+  try {
+    return JSON.parse(localStorage.getItem(RECENTS_KEY) ?? "[]");
+  } catch {
+    return [];
+  }
+}
+
+export function addRecentSong(song: Omit<RecentSong, "ts">): void {
+  const recents = getRecentSongs().filter((r) => r.title !== song.title);
+  recents.unshift({ ...song, ts: Date.now() });
+  localStorage.setItem(RECENTS_KEY, JSON.stringify(recents.slice(0, MAX_RECENTS)));
+}
 import { API_BASE } from "./song-api";
 import { fetchWithAuth } from "./auth";
 
