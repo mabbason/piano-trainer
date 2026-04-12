@@ -27,6 +27,7 @@ interface Props {
   onDashboard: () => void;
   onSwitchUser: () => void;
   onDeleteProfile?: () => void;
+  onChangePassphrase?: () => void;
   onLogout: () => void;
 }
 
@@ -87,6 +88,7 @@ export function Controls({
   onDashboard,
   onSwitchUser,
   onDeleteProfile,
+  onChangePassphrase,
   onLogout,
 }: Props) {
   return (
@@ -253,6 +255,7 @@ export function Controls({
         onDashboard={onDashboard}
         onSwitchUser={onSwitchUser}
         onDeleteProfile={onDeleteProfile}
+        onChangePassphrase={onChangePassphrase}
         onLogout={onLogout}
       />
     </div>

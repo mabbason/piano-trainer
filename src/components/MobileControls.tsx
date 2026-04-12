@@ -27,6 +27,7 @@ interface Props {
   onDashboard: () => void;
   onSwitchUser: () => void;
   onDeleteProfile?: () => void;
+  onChangePassphrase?: () => void;
   onLogout: () => void;
 }
 
@@ -86,6 +87,7 @@ export function MobileControlsHeader({
   onDashboard,
   onSwitchUser,
   onDeleteProfile,
+  onChangePassphrase,
   onLogout,
 }: Props) {
   const [gearOpen, setGearOpen] = useState(false);
@@ -123,6 +125,7 @@ export function MobileControlsHeader({
           onDashboard={onDashboard}
           onSwitchUser={onSwitchUser}
           onDeleteProfile={onDeleteProfile}
+          onChangePassphrase={onChangePassphrase}
           onLogout={onLogout}
         />
       </div>

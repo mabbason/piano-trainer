@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_BASE } from "../utils/song-api";
-import { fetchWithAuth, changePassphrase } from "../utils/auth";
+import { fetchWithAuth } from "../utils/auth";
 import type { SectionProgress } from "../engine/sections";
 import { UserMenu } from "./UserMenu";
 
@@ -52,35 +52,6 @@ export function Dashboard({ userId, userAvatar, onClose, onSwitchUser, onDeleteP
   const [songsStarted, setSongsStarted] = useState(0);
   const [songsCompleted, setSongsCompleted] = useState(0);
   const [loading, setLoading] = useState(true);
-
-  const [showPassphraseForm, setShowPassphraseForm] = useState(false);
-  const [currentPw, setCurrentPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [pwError, setPwError] = useState("");
-  const [pwSuccess, setPwSuccess] = useState(false);
-  const [pwSubmitting, setPwSubmitting] = useState(false);
-
-  async function handleChangePassphrase(e: React.FormEvent) {
-    e.preventDefault();
-    setPwError("");
-    setPwSuccess(false);
-    setPwSubmitting(true);
-
-    const result = await changePassphrase(currentPw, newPw);
-    setPwSubmitting(false);
-
-    if (result.ok) {
-      setPwSuccess(true);
-      setCurrentPw("");
-      setNewPw("");
-      setTimeout(() => {
-        setShowPassphraseForm(false);
-        setPwSuccess(false);
-      }, 2000);
-    } else {
-      setPwError(result.error || "Failed to change passphrase");
-    }
-  }
 
   useEffect(() => {
     fetchWithAuth(`${API_BASE}/api/users/${userId}/progress`)
@@ -192,52 +163,6 @@ export function Dashboard({ userId, userAvatar, onClose, onSwitchUser, onDeleteP
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-n-700">
-              {!showPassphraseForm ? (
-                <button
-                  onClick={() => setShowPassphraseForm(true)}
-                  className="text-n-500 hover:text-n-300 text-xs"
-                >
-                  Change passphrase
-                </button>
-              ) : (
-                <form onSubmit={handleChangePassphrase} className="space-y-2">
-                  <h4 className="text-sm font-medium text-n-400">Change Passphrase</h4>
-                  <input
-                    type="password"
-                    placeholder="Current passphrase"
-                    value={currentPw}
-                    onChange={(e) => setCurrentPw(e.target.value)}
-                    className="w-full bg-n-800 border border-n-600 rounded px-3 py-1.5 text-sm text-white placeholder-n-500 focus:outline-none focus:border-purple-light"
-                  />
-                  <input
-                    type="password"
-                    placeholder="New passphrase"
-                    value={newPw}
-                    onChange={(e) => setNewPw(e.target.value)}
-                    className="w-full bg-n-800 border border-n-600 rounded px-3 py-1.5 text-sm text-white placeholder-n-500 focus:outline-none focus:border-purple-light"
-                  />
-                  {pwError && <p className="text-pink-base text-xs">{pwError}</p>}
-                  {pwSuccess && <p className="text-brand-green-base text-xs">Passphrase updated</p>}
-                  <div className="flex gap-2">
-                    <button
-                      type="submit"
-                      disabled={pwSubmitting || !currentPw || !newPw}
-                      className="bg-purple-base hover:bg-purple-light disabled:opacity-40 text-white text-xs px-3 py-1.5 rounded"
-                    >
-                      {pwSubmitting ? "Saving..." : "Save"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setShowPassphraseForm(false); setPwError(""); setPwSuccess(false); }}
-                      className="text-n-400 hover:text-white text-xs px-3 py-1.5"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
           </>
         )}
       </div>

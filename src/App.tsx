@@ -13,6 +13,7 @@ import { Dashboard } from "./components/Dashboard";
 import { PassphraseGate } from "./components/PassphraseGate";
 import { UserPicker } from "./components/UserPicker";
 import { UserMenu } from "./components/UserMenu";
+import { ChangePassphraseModal } from "./components/ChangePassphraseModal";
 import { snapToMeasure, buildLoopRange } from "./utils/loop";
 import type { LoopRange } from "./utils/loop";
 import {
@@ -50,6 +51,7 @@ function App() {
   const [showSections, setShowSections] = useState(true);
   const [showNotation, setShowNotation] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showChangePassphrase, setShowChangePassphrase] = useState(false);
   const isMobile = useIsMobile();
   const rafRef = useRef<number>(0);
   const lastSectionRef = useRef<number>(-1);
@@ -502,12 +504,17 @@ function App() {
             onDashboard={handleMenuDashboard}
             onSwitchUser={handleMenuSwitchUser}
             onDeleteProfile={handleDeleteProfile}
+            onChangePassphrase={() => setShowChangePassphrase(true)}
             onLogout={handleMenuLogout}
           />
         </div>
         <div className="flex-1">
           <FileLoader onFileLoad={handleFileLoad} />
         </div>
+        <ChangePassphraseModal
+          open={showChangePassphrase}
+          onClose={() => setShowChangePassphrase(false)}
+        />
       </div>
     );
   }
@@ -561,6 +568,7 @@ function App() {
           onDashboard={handleMenuDashboard}
           onSwitchUser={handleMenuSwitchUser}
           onDeleteProfile={handleDeleteProfile}
+          onChangePassphrase={() => setShowChangePassphrase(true)}
           onLogout={handleMenuLogout}
         />
         <div className="flex-1 overflow-hidden relative">
@@ -615,6 +623,7 @@ function App() {
         onDashboard={handleMenuDashboard}
         onSwitchUser={handleMenuSwitchUser}
         onDeleteProfile={handleDeleteProfile}
+        onChangePassphrase={() => setShowChangePassphrase(true)}
         onLogout={handleMenuLogout}
       />
       <NotationPanel
@@ -647,6 +656,10 @@ function App() {
           />
         )}
       </div>
+      <ChangePassphraseModal
+        open={showChangePassphrase}
+        onClose={() => setShowChangePassphrase(false)}
+      />
     </div>
   );
 }

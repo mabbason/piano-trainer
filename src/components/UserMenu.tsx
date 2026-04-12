@@ -6,6 +6,7 @@ interface Props {
   onDashboard?: () => void;
   onSwitchUser?: () => void;
   onDeleteProfile?: () => void;
+  onChangePassphrase?: () => void;
   onLogout: () => void;
 }
 
@@ -27,7 +28,7 @@ function UserIcon() {
   );
 }
 
-export function UserMenu({ avatar, onDashboard, onSwitchUser, onDeleteProfile, onLogout }: Props) {
+export function UserMenu({ avatar, onDashboard, onSwitchUser, onDeleteProfile, onChangePassphrase, onLogout }: Props) {
   const [open, setOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -85,6 +86,14 @@ export function UserMenu({ avatar, onDashboard, onSwitchUser, onDeleteProfile, o
               className="w-full text-left px-4 py-2 text-sm text-n-300 hover:bg-n-700 hover:text-white"
             >
               Switch Profile
+            </button>
+          )}
+          {onChangePassphrase && (
+            <button
+              onClick={() => { setOpen(false); onChangePassphrase(); }}
+              className="w-full text-left px-4 py-2 text-sm text-n-300 hover:bg-n-700 hover:text-white"
+            >
+              Change Passphrase
             </button>
           )}
           {onDeleteProfile && (
