@@ -82,8 +82,7 @@ test.describe("Chorda App", () => {
     await fileInput.setInputFiles(MIDI_FILE);
     await expect(page.locator("canvas")).toBeVisible();
 
-    await page.click("text=\u2190");
-    await expect(page.locator("text=Chorda")).toBeVisible();
+    await page.click('[aria-label="Back"]');
     await expect(page.locator("text=Drop a MIDI file")).toBeVisible();
   });
 

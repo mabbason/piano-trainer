@@ -2,14 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import { fetchUsers, createUser, selectUser } from "../utils/auth";
 import type { User } from "../utils/auth";
 import { AvatarPicker, AVATAR_MAP } from "./AvatarPicker";
-import { UserMenu } from "./UserMenu";
 
 interface Props {
   onUserSelected: (userId: number, avatar: string) => void;
-  onLogout: () => void;
 }
 
-export function UserPicker({ onUserSelected, onLogout }: Props) {
+export function UserPicker({ onUserSelected }: Props) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [selecting, setSelecting] = useState<number | null>(null);
@@ -53,12 +51,8 @@ export function UserPicker({ onUserSelected, onLogout }: Props) {
   }, [newName, newAvatar, handleSelect]);
 
   return (
-    <div className="h-screen bg-n-900 relative">
-      <div className="absolute top-3 right-4">
-        <UserMenu onLogout={onLogout} />
-      </div>
-      <div className="h-full flex items-center justify-center">
-        <div className="w-full max-w-sm md:max-w-lg px-6">
+    <div className="h-screen bg-n-900 flex items-center justify-center overflow-y-auto py-10">
+      <div className="w-full max-w-sm md:max-w-lg px-6">
         <div className="flex justify-center mb-2">
           <img src="/logos/chorda-logo-white-full.png" alt="Chorda" className="h-24 md:h-40" />
         </div>
@@ -68,21 +62,23 @@ export function UserPicker({ onUserSelected, onLogout }: Props) {
           <div className="text-n-500 text-center">Loading...</div>
         ) : (
           <>
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
               {users.map((user) => (
                 <button
                   key={user.id}
                   onClick={() => handleSelect(user.id, user.avatar)}
                   disabled={selecting !== null}
-                  className={`flex flex-col items-center justify-center gap-1 p-2 w-20 h-20 md:w-28 md:h-28 rounded-full transition-all ${
+                  className={`flex flex-col items-center gap-3 p-5 rounded-xl transition-all ${
                     selecting === user.id
-                      ? "bg-purple-base/30 ring-2 ring-purple-light"
+                      ? "bg-purple-base/20 ring-2 ring-purple-light"
                       : "bg-n-800 hover:bg-n-700"
                   } disabled:opacity-50`}
                 >
-                  <span className="text-4xl">
-                    {AVATAR_MAP[user.avatar] || AVATAR_MAP.piano}
-                  </span>
+                  <div className="w-16 h-16 rounded-full bg-n-700 flex items-center justify-center">
+                    <span className="text-3xl leading-none">
+                      {AVATAR_MAP[user.avatar] || AVATAR_MAP.piano}
+                    </span>
+                  </div>
                   <span className="text-white text-sm font-medium truncate w-full text-center">
                     {selecting === user.id ? "Loading..." : user.name}
                   </span>
@@ -92,10 +88,12 @@ export function UserPicker({ onUserSelected, onLogout }: Props) {
               {/* Add profile card */}
               <button
                 onClick={() => setShowAdd(true)}
-                className="flex flex-col items-center justify-center gap-1 w-20 h-20 md:w-28 md:h-28 rounded-full border-2 border-dashed border-n-700 hover:border-purple-light text-n-500 hover:text-purple-light transition-all"
+                className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-dashed border-n-700 hover:border-purple-light text-n-500 hover:text-purple-light transition-all"
               >
-                <span className="text-3xl">+</span>
-                <span className="text-sm">Add Profile</span>
+                <div className="w-16 h-16 rounded-full border-2 border-dashed border-current flex items-center justify-center">
+                  <span className="text-3xl leading-none">+</span>
+                </div>
+                <span className="text-sm font-medium">Add Profile</span>
               </button>
             </div>
 
@@ -140,8 +138,6 @@ export function UserPicker({ onUserSelected, onLogout }: Props) {
             )}
           </>
         )}
-
-        </div>
       </div>
     </div>
   );

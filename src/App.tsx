@@ -99,6 +99,7 @@ function App() {
         setAuthState("user-picker");
       } else if (view === "song-select") {
         setShowDashboard(false);
+        setAuthState("ready");
         playback.stop();
         setSong(null);
         setIsPlaying(false);
@@ -463,7 +464,6 @@ function App() {
           setAuthState("ready");
           history.pushState({ view: "song-select" }, "");
         }}
-        onLogout={() => setAuthState("passphrase")}
       />
     );
   }

@@ -63,7 +63,7 @@ export function UserMenu({ avatar, onDashboard, onSwitchUser, onDeleteProfile, o
         aria-label="Profile menu"
       >
         {avatar && AVATAR_MAP[avatar] ? (
-          <span className="text-lg leading-none">{AVATAR_MAP[avatar]}</span>
+          <span className="text-xl leading-none">{AVATAR_MAP[avatar]}</span>
         ) : (
           <UserIcon />
         )}

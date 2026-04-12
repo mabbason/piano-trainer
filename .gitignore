@@ -26,3 +26,4 @@ dist-ssr
 # Test artifacts
 test-results/
 test/screenshots/
+.gstack/
