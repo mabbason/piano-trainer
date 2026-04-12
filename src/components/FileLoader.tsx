@@ -162,6 +162,7 @@ export function FileLoader({ onFileLoad }: Props) {
           const buffer = await response.arrayBuffer();
           // Refresh timestamp
           addRecentSong({ ...recent });
+          refreshRecents();
           onFileLoad(buffer, recent.fileKey);
         } else if (recent.songId) {
           const buffer = await fetchSongMidi(recent.songId);
