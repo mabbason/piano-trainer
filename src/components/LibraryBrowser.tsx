@@ -14,10 +14,10 @@ const DIFF_LABELS: Record<number, string> = {
 
 const DIFF_COLORS: Record<number, string> = {
   1: "bg-brand-green-base",
-  2: "bg-purple-base",
+  2: "bg-blue-base",
   3: "bg-yellow-base",
   4: "bg-pink-base",
-  5: "bg-purple-dark",
+  5: "bg-purple-base",
 };
 
 const DURATION_OPTIONS = [

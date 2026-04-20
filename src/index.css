@@ -20,6 +20,10 @@
   --color-yellow-light: #fee26e;
   --color-yellow-dark: #e5bf1e;
 
+  --color-blue-base: #4a90e2;
+  --color-blue-light: #6faee8;
+  --color-blue-dark: #2d74c4;
+
   /* Brand neutral scale (replaces slate) */
   --color-n-50: #f8f9fb;
   --color-n-100: #f0f2f5;
