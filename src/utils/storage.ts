@@ -28,6 +28,15 @@ export function addRecentSong(song: Omit<RecentSong, "ts">): void {
   recents.unshift({ ...song, ts: Date.now() });
   localStorage.setItem(RECENTS_KEY, JSON.stringify(recents.slice(0, MAX_RECENTS)));
 }
+
+export function removeRecentSong(ts: number): void {
+  const recents = getRecentSongs().filter((r) => r.ts !== ts);
+  localStorage.setItem(RECENTS_KEY, JSON.stringify(recents));
+}
+
+export function clearRecentSongs(): void {
+  localStorage.removeItem(RECENTS_KEY);
+}
 import { API_BASE } from "./song-api";
 import { fetchWithAuth } from "./auth";
 

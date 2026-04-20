@@ -1,6 +1,7 @@
 import { useCallback, useRef, useEffect, useState } from "react";
 import * as Tone from "tone";
 import type { Song } from "../models/song";
+import { VIEWPORT_BEHIND_SEC } from "../renderer/waterfall-renderer";
 
 const SALAMANDER_BASE_URL = "https://tonejs.github.io/audio/salamander/";
 
@@ -80,7 +81,7 @@ export function usePlayback(song: Song | null, visibleHands: Set<string>) {
     for (const track of theSong.tracks) {
       if (!hands.has(track.hand) && track.hand !== "unknown") continue;
       for (const note of track.notes) {
-        const scheduledTime = note.startSec / speed;
+        const scheduledTime = (note.startSec + VIEWPORT_BEHIND_SEC) / speed;
         const duration = note.durationSec / speed;
 
         transport.schedule((time) => {

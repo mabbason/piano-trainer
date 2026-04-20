@@ -508,7 +508,7 @@ function App() {
             onLogout={handleMenuLogout}
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <FileLoader onFileLoad={handleFileLoad} />
         </div>
         <ChangePassphraseModal

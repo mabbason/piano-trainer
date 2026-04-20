@@ -18,18 +18,33 @@ import { fetchWithAuth } from "./auth";
 
 const opts: RequestInit = { credentials: "include" };
 
+export interface SearchResult {
+  songs: SongResult[];
+  total: number;
+}
+
 export async function searchSongs(
   query?: string,
-  options?: { genre?: string; difficulty?: number; limit?: number }
-): Promise<SongResult[]> {
+  options?: {
+    genres?: string[];
+    difficulties?: number[];
+    durations?: string[];
+    sort?: string;
+    limit?: number;
+    offset?: number;
+  }
+): Promise<SearchResult> {
   const params = new URLSearchParams();
   if (query) params.set("q", query);
-  if (options?.genre) params.set("genre", options.genre);
-  if (options?.difficulty) params.set("difficulty", String(options.difficulty));
-  params.set("limit", String(options?.limit ?? 20));
+  for (const g of options?.genres ?? []) params.append("genre", g);
+  for (const d of options?.difficulties ?? []) params.append("difficulty", String(d));
+  for (const d of options?.durations ?? []) params.append("duration", d);
+  if (options?.sort) params.set("sort", options.sort);
+  params.set("limit", String(options?.limit ?? 24));
+  params.set("offset", String(options?.offset ?? 0));
 
   const res = await fetch(`${API_BASE}/api/songs/search?${params}`, opts);
-  if (!res.ok) return [];
+  if (!res.ok) return { songs: [], total: 0 };
   return res.json();
 }
 

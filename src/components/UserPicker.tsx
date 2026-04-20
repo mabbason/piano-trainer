@@ -62,38 +62,38 @@ export function UserPicker({ onUserSelected }: Props) {
           <div className="text-n-500 text-center">Loading...</div>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+            <div className="flex flex-wrap justify-center gap-6 mb-6">
               {users.map((user) => (
                 <button
                   key={user.id}
                   onClick={() => handleSelect(user.id, user.avatar)}
                   disabled={selecting !== null}
-                  className={`flex flex-col items-center gap-3 p-5 rounded-xl transition-all ${
-                    selecting === user.id
-                      ? "bg-purple-base/20 ring-2 ring-purple-light"
-                      : "bg-n-800 hover:bg-n-700"
-                  } disabled:opacity-50`}
+                  className="flex flex-col items-center gap-2 group disabled:opacity-50"
                 >
-                  <div className="w-16 h-16 rounded-full bg-n-700 flex items-center justify-center">
-                    <span className="text-3xl leading-none">
+                  <div className={`w-28 h-28 rounded-full flex items-center justify-center transition-all ${
+                    selecting === user.id
+                      ? "ring-2 ring-purple-light bg-purple-base/20"
+                      : "bg-n-800 group-hover:ring-2 group-hover:ring-purple-light"
+                  }`}>
+                    <span className="text-5xl leading-none">
                       {AVATAR_MAP[user.avatar] || AVATAR_MAP.piano}
                     </span>
                   </div>
-                  <span className="text-white text-sm font-medium truncate w-full text-center">
+                  <span className="text-white text-sm font-medium text-center max-w-[7rem] truncate">
                     {selecting === user.id ? "Loading..." : user.name}
                   </span>
                 </button>
               ))}
 
-              {/* Add profile card */}
+              {/* Add profile */}
               <button
                 onClick={() => setShowAdd(true)}
-                className="flex flex-col items-center gap-3 p-5 rounded-xl border-2 border-dashed border-n-700 hover:border-purple-light text-n-500 hover:text-purple-light transition-all"
+                className="flex flex-col items-center gap-2 group"
               >
-                <div className="w-16 h-16 rounded-full border-2 border-dashed border-current flex items-center justify-center">
-                  <span className="text-3xl leading-none">+</span>
+                <div className="w-28 h-28 rounded-full border-2 border-dashed border-n-700 group-hover:border-purple-light flex items-center justify-center transition-all">
+                  <span className="text-4xl text-n-500 group-hover:text-purple-light leading-none transition-colors">+</span>
                 </div>
-                <span className="text-sm font-medium">Add Profile</span>
+                <span className="text-n-500 group-hover:text-purple-light text-sm font-medium transition-colors">Add Profile</span>
               </button>
             </div>
 

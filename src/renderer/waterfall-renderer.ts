@@ -1,13 +1,11 @@
 import type { Song } from "../models/song";
 import type { LoopRange } from "../utils/loop";
 
-const KEYBOARD_HEIGHT_DESKTOP = 112;
-const KEYBOARD_HEIGHT_MOBILE = 80;
 const VIEWPORT_AHEAD_SEC = 4;
-const VIEWPORT_BEHIND_SEC = 0.5; // less behind = notes land closer to keyboard
+export const VIEWPORT_BEHIND_SEC = 0.5;
 
 function getKeyboardHeight(canvasHeight: number): number {
-  return canvasHeight < 500 ? KEYBOARD_HEIGHT_MOBILE : KEYBOARD_HEIGHT_DESKTOP;
+  return Math.round(canvasHeight * 0.2);
 }
 
 // Keep in sync with brand palette in src/index.css @theme
@@ -315,7 +313,9 @@ export function render(
       const noteEnd = note.startSec + note.durationSec;
       if (noteEnd < viewStart || note.startSec > viewEnd) continue;
 
-      const isActive = note.startSec <= currentTimeSec && noteEnd > currentTimeSec;
+      const triggerSec = note.startSec + VIEWPORT_BEHIND_SEC;
+      const releaseSec = noteEnd + VIEWPORT_BEHIND_SEC;
+      const isActive = triggerSec <= currentTimeSec && releaseSec > currentTimeSec;
       if (isActive) {
         activeNotes.set(note.midi, getNoteColor(track.hand, false));
       }
@@ -342,7 +342,7 @@ export function render(
       ctx.fillStyle = color;
       ctx.globalAlpha = isActive ? 1.0 : 0.6;
       ctx.beginPath();
-      const radius = Math.min(3, noteHeight / 2);
+      const radius = Math.min(noteW / 2, 8);
       ctx.roundRect(noteX, Math.round(noteTopY), noteW, Math.round(noteHeight), radius);
       ctx.fill();
 
