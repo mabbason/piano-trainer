@@ -93,7 +93,13 @@ function App() {
     const handlePopState = (e: PopStateEvent) => {
       const view = e.state?.view;
       skipPushRef.current = true;
-      if (view === "user-picker") {
+      if (view === "passphrase") {
+        setShowDashboard(false);
+        setSong(null);
+        setUserId(null);
+        setUserAvatar(null);
+        setAuthState("passphrase");
+      } else if (view === "user-picker") {
         setShowDashboard(false);
         setSong(null);
         setUserId(null);
@@ -453,7 +459,14 @@ function App() {
   }
 
   if (authState === "passphrase") {
-    return <PassphraseGate onSuccess={() => setAuthState("user-picker")} />;
+    return (
+      <PassphraseGate
+        onSuccess={() => {
+          setAuthState("user-picker");
+          history.pushState({ view: "user-picker" }, "");
+        }}
+      />
+    );
   }
 
   if (authState === "user-picker") {

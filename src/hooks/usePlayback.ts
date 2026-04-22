@@ -5,6 +5,11 @@ import { VIEWPORT_BEHIND_SEC } from "../renderer/waterfall-renderer";
 
 const SALAMANDER_BASE_URL = "https://tonejs.github.io/audio/salamander/";
 
+// Shift audio earlier to compensate for output latency. Positive = audio plays
+// earlier relative to the visual (note hits keyboard). Adjust in 10-20ms steps.
+// Tell Claude "still late by Nms" or "now early by Nms" to tune.
+const AUDIO_VISUAL_OFFSET_SEC = 0.1;
+
 const SAMPLER_NOTES: Record<string, string> = {
   A0: "A0.mp3",
   C1: "C1.mp3",
@@ -81,7 +86,7 @@ export function usePlayback(song: Song | null, visibleHands: Set<string>) {
     for (const track of theSong.tracks) {
       if (!hands.has(track.hand) && track.hand !== "unknown") continue;
       for (const note of track.notes) {
-        const scheduledTime = (note.startSec + VIEWPORT_BEHIND_SEC) / speed;
+        const scheduledTime = (note.startSec + VIEWPORT_BEHIND_SEC - AUDIO_VISUAL_OFFSET_SEC) / speed;
         const duration = note.durationSec / speed;
 
         transport.schedule((time) => {

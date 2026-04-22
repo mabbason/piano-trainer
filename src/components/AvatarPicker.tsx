@@ -31,7 +31,7 @@ interface Props {
 
 export function AvatarPicker({ selected, onSelect }: Props) {
   return (
-    <div className="flex flex-wrap justify-center gap-2">
+    <div className="grid grid-cols-5 gap-2">
       {AVATAR_KEYS.map((key) => (
         <button
           key={key}

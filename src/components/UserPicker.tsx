@@ -75,7 +75,7 @@ export function UserPicker({ onUserSelected }: Props) {
                       ? "ring-2 ring-purple-light bg-purple-base/20"
                       : "bg-n-800 group-hover:ring-2 group-hover:ring-purple-light"
                   }`}>
-                    <span className="text-5xl leading-none">
+                    <span className="text-5xl leading-none mt-1">
                       {AVATAR_MAP[user.avatar] || AVATAR_MAP.piano}
                     </span>
                   </div>
