@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chorda — Brand Guide</title>
+<style>
+  @font-face {
+    font-family: 'Goldman Sans';
+    src: url('./fonts/GoldmanSans_A_Lt.ttf') format('truetype');
+    font-weight: 300; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Goldman Sans';
+    src: url('./fonts/GoldmanSans_A_Rg.ttf') format('truetype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Goldman Sans';
+    src: url('./fonts/GoldmanSans_A_Md.ttf') format('truetype');
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Goldman Sans';
+    src: url('./fonts/GoldmanSans_A_Blk.ttf') format('truetype');
+    font-weight: 900; font-style: normal; font-display: swap;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Goldman Sans', system-ui, sans-serif;
+    font-weight: 400;
+    color: #141922;
+    background: #f8f9fb;
+    line-height: 1.5;
+    padding: 3rem 2rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  h1, h2, h3 { font-weight: 900; letter-spacing: -0.02em; }
+  h1 { font-size: 3rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.5rem; margin: 3rem 0 1.25rem; color: #36322f; border-bottom: 2px solid #dfe3ea; padding-bottom: 0.5rem; }
+  h3 { font-size: 1.125rem; margin: 1.5rem 0 0.75rem; }
+  p  { margin-bottom: 1rem; color: #5c6577; }
+
+  .subtitle { color: #7d8799; font-weight: 400; font-size: 1.125rem; margin-bottom: 2rem; }
+
+  /* Logo section */
+  .logo-row { display: flex; gap: 2rem; flex-wrap: wrap; align-items: center; }
+  .logo-box {
+    flex: 1; min-width: 200px; padding: 2rem; border-radius: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-box img { max-width: 220px; height: auto; }
+  .logo-light { background: #ffffff; border: 1px solid #dfe3ea; }
+  .logo-dark  { background: #141922; }
+
+  /* Color palette */
+  .palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+  .swatch {
+    border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    background: #fff;
+  }
+  .swatch-color { height: 80px; }
+  .swatch-info { padding: 0.75rem; }
+  .swatch-name { font-weight: 900; font-size: 0.875rem; }
+  .swatch-hex  { font-size: 0.8rem; color: #7d8799; font-family: 'SF Mono', monospace; }
+
+  /* Neutral strip */
+  .neutral-strip { display: flex; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-top: 1rem; }
+  .neutral-chip { flex: 1; height: 48px; position: relative; }
+  .neutral-chip span {
+    position: absolute; bottom: -1.5rem; left: 50%; transform: translateX(-50%);
+    font-size: 0.65rem; color: #7d8799; font-family: monospace; white-space: nowrap;
+  }
+
+  /* Type specimens */
+  .type-specimen { background: #fff; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #dfe3ea; }
+  .ts-headline { font-weight: 900; font-size: 2.25rem; margin-bottom: 0.25rem; }
+  .ts-body     { font-weight: 400; font-size: 1rem; color: #5c6577; }
+  .ts-label    { font-size: 0.75rem; color: #a1aab8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+
+  /* Weight row */
+  .weight-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .weight-card {
+    flex: 1; min-width: 120px; background: #fff; border: 1px solid #dfe3ea;
+    border-radius: 0.75rem; padding: 1.25rem; text-align: center;
+  }
+  .weight-card .big { font-size: 2rem; line-height: 1.2; }
+  .weight-card .meta { font-size: 0.75rem; color: #a1aab8; margin-top: 0.5rem; }
+
+  /* Spacing / radius visual */
+  .token-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+  .token-card {
+    background: #fff; border: 1px solid #dfe3ea; border-radius: 0.75rem;
+    padding: 1rem; font-size: 0.85rem;
+  }
+  .token-card code { font-family: 'SF Mono', monospace; color: #36322f; font-size: 0.8rem; }
+  .token-card .label { color: #a1aab8; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* Radius visual */
+  .radius-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; }
+  .radius-demo {
+    width: 64px; height: 64px; background: #36322f; display: flex;
+    align-items: center; justify-content: center; color: #fff; font-size: 0.65rem; font-weight: 500;
+  }
+
+  /* Favicon row */
+  .favicon-row { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: end; }
+  .favicon-item { text-align: center; }
+  .favicon-item img { display: block; margin: 0 auto 0.5rem; image-rendering: pixelated; }
+  .favicon-item span { font-size: 0.75rem; color: #7d8799; }
+
+  /* Dark mode preview */
+  .dark-preview {
+    background: #141922; color: #f0f2f5; border-radius: 0.75rem;
+    padding: 2rem; margin-top: 1rem;
+  }
+  .dark-preview h3 { color: #f0f2f5; }
+  .dark-palette { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+  .dark-chip { width: 60px; height: 60px; border-radius: 0.5rem; }
+
+  /* Snippet */
+  pre {
+    background: #272e3b; color: #f0f2f5; padding: 1.25rem; border-radius: 0.75rem;
+    font-size: 0.8rem; overflow-x: auto; line-height: 1.6; font-family: 'SF Mono', monospace;
+  }
+  code { font-family: 'SF Mono', monospace; }
+</style>
+</head>
+<body>
+
+<h1>Chorda</h1>
+<p class="subtitle">Brand Identity Kit &amp; Design Token Reference</p>
+
+<!-- ── LOGO ──────────────────────────────────── -->
+<h2>Logo</h2>
+<p>The logo body and wordmark use near-black <code style="font-family:'SF Mono',monospace;color:#1a1816">#1a1816</code>, not the site charcoal. This keeps the mark punchy at every size.</p>
+<h3>Stacked Lockup</h3>
+<div class="logo-row">
+  <div class="logo-box logo-light"><img src="logos/chorda-logo-full.png" alt="Chorda logo stacked on light"></div>
+  <div class="logo-box logo-dark"><img src="logos/chorda-logo-full.png" alt="Chorda logo stacked on dark"></div>
+</div>
+<h3>Horizontal Lockup</h3>
+<div class="logo-row">
+  <div class="logo-box logo-light"><img src="logos/chorda-logo-horizontal.png" alt="Chorda logo horizontal on light" style="max-width:320px"></div>
+  <div class="logo-box logo-dark"><img src="logos/chorda-logo-horizontal.png" alt="Chorda logo horizontal on dark" style="max-width:320px"></div>
+</div>
+<h3>Icon Mark (favicons, app icons)</h3>
+<div class="logo-row">
+  <div class="logo-box logo-light"><img src="logos/chorda-icon.svg" alt="Chorda icon on light" style="max-width:140px"></div>
+  <div class="logo-box logo-dark"><img src="logos/chorda-icon.svg" alt="Chorda icon on dark" style="max-width:140px"></div>
+</div>
+
+<!-- ── COLORS ────────────────────────────────── -->
+<h2>Color Palette</h2>
+<h3>Brand Colors</h3>
+<div class="palette">
+  <div class="swatch"><div class="swatch-color" style="background:#1a1816"></div><div class="swatch-info"><div class="swatch-name">Near-Black (logo)</div><div class="swatch-hex">#1a1816</div></div></div>
+  <div class="swatch"><div class="swatch-color" style="background:#36322f"></div><div class="swatch-info"><div class="swatch-name">Charcoal (site)</div><div class="swatch-hex">#36322f</div></div></div>
+  <div class="swatch"><div class="swatch-color" style="background:#9768f8"></div><div class="swatch-info"><div class="swatch-name">Purple</div><div class="swatch-hex">#9768f8</div></div></div>
+  <div class="swatch"><div class="swatch-color" style="background:#fb396a"></div><div class="swatch-info"><div class="swatch-name">Pink</div><div class="swatch-hex">#fb396a</div></div></div>
+  <div class="swatch"><div class="swatch-color" style="background:#8ec56f"></div><div class="swatch-info"><div class="swatch-name">Green</div><div class="swatch-hex">#8ec56f</div></div></div>
+  <div class="swatch"><div class="swatch-color" style="background:#fdd63b"></div><div class="swatch-info"><div class="swatch-name">Yellow</div><div class="swatch-hex">#fdd63b</div></div></div>
+</div>
+
+<h3>Neutrals</h3>
+<div class="neutral-strip">
+  <div class="neutral-chip" style="background:#f8f9fb"><span>#f8f9fb</span></div>
+  <div class="neutral-chip" style="background:#f0f2f5"><span>#f0f2f5</span></div>
+  <div class="neutral-chip" style="background:#dfe3ea"><span>#dfe3ea</span></div>
+  <div class="neutral-chip" style="background:#c4cad6"><span>#c4cad6</span></div>
+  <div class="neutral-chip" style="background:#a1aab8"><span>#a1aab8</span></div>
+  <div class="neutral-chip" style="background:#7d8799"><span>#7d8799</span></div>
+  <div class="neutral-chip" style="background:#5c6577"><span>#5c6577</span></div>
+  <div class="neutral-chip" style="background:#3f4858"><span>#3f4858</span></div>
+  <div class="neutral-chip" style="background:#272e3b"><span>#272e3b</span></div>
+  <div class="neutral-chip" style="background:#141922"><span>#141922</span></div>
+</div>
+
+<!-- ── TYPOGRAPHY ────────────────────────────── -->
+<h2>Typography</h2>
+<p>All type uses <strong>Goldman Sans</strong>. Headlines are set in <strong>Black (900)</strong> weight; body copy in Regular (400).</p>
+
+<div class="type-specimen">
+  <div class="ts-label">Headline — Goldman Sans Black</div>
+  <div class="ts-headline">The quick brown fox jumps over the lazy dog</div>
+</div>
+<div class="type-specimen">
+  <div class="ts-label">Body — Goldman Sans Regular</div>
+  <div class="ts-body">The quick brown fox jumps over the lazy dog. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Cras justo odio, dapibus ut facilisis in, egestas eget quam.</div>
+</div>
+
+<h3>Weights</h3>
+<div class="weight-row">
+  <div class="weight-card"><div class="big" style="font-weight:300">Aa</div><div class="meta">Light · 300</div></div>
+  <div class="weight-card"><div class="big" style="font-weight:400">Aa</div><div class="meta">Regular · 400</div></div>
+  <div class="weight-card"><div class="big" style="font-weight:500">Aa</div><div class="meta">Medium · 500</div></div>
+  <div class="weight-card"><div class="big" style="font-weight:900">Aa</div><div class="meta">Black · 900</div></div>
+</div>
+
+<h3>Type Scale (1.25 ratio)</h3>
+<div class="type-specimen">
+  <div style="font-weight:900; font-size:3.75rem; line-height:1.1">6xl — 60 px</div>
+  <div style="font-weight:900; font-size:3rem; line-height:1.1">5xl — 48 px</div>
+  <div style="font-weight:900; font-size:2.25rem; line-height:1.15">4xl — 36 px</div>
+  <div style="font-weight:900; font-size:1.875rem; line-height:1.2">3xl — 30 px</div>
+  <div style="font-weight:900; font-size:1.5rem; line-height:1.25">2xl — 24 px</div>
+  <div style="font-weight:400; font-size:1.25rem; line-height:1.375">xl — 20 px</div>
+  <div style="font-weight:400; font-size:1.125rem; line-height:1.5">lg — 18 px</div>
+  <div style="font-weight:400; font-size:1rem; line-height:1.5">base — 16 px</div>
+  <div style="font-weight:400; font-size:0.875rem; line-height:1.5; color:#7d8799">sm — 14 px</div>
+  <div style="font-weight:400; font-size:0.75rem; line-height:1.5; color:#a1aab8">xs — 12 px</div>
+</div>
+
+<!-- ── SPACING ───────────────────────────────── -->
+<h2>Spacing &amp; Radius</h2>
+<h3>Border Radius</h3>
+<div class="radius-row">
+  <div><div class="radius-demo" style="border-radius:0">none</div></div>
+  <div><div class="radius-demo" style="border-radius:4px">sm</div></div>
+  <div><div class="radius-demo" style="border-radius:8px">md</div></div>
+  <div><div class="radius-demo" style="border-radius:12px">lg</div></div>
+  <div><div class="radius-demo" style="border-radius:16px">xl</div></div>
+  <div><div class="radius-demo" style="border-radius:24px">2xl</div></div>
+  <div><div class="radius-demo" style="border-radius:9999px">full</div></div>
+</div>
+
+<!-- ── SHADOWS ───────────────────────────────── -->
+<h2>Shadows</h2>
+<div style="display:flex; gap:2rem; flex-wrap:wrap; margin-top:1rem;">
+  <div style="width:120px; height:80px; background:#fff; border-radius:12px; box-shadow:0 1px 2px rgba(10,13,18,0.05); display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:#7d8799">sm</div>
+  <div style="width:120px; height:80px; background:#fff; border-radius:12px; box-shadow:0 4px 6px -1px rgba(10,13,18,0.08), 0 2px 4px -2px rgba(10,13,18,0.05); display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:#7d8799">md</div>
+  <div style="width:120px; height:80px; background:#fff; border-radius:12px; box-shadow:0 10px 15px -3px rgba(10,13,18,0.08), 0 4px 6px -4px rgba(10,13,18,0.04); display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:#7d8799">lg</div>
+  <div style="width:120px; height:80px; background:#fff; border-radius:12px; box-shadow:0 20px 25px -5px rgba(10,13,18,0.10), 0 8px 10px -6px rgba(10,13,18,0.05); display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:#7d8799">xl</div>
+</div>
+
+<!-- ── FAVICONS ──────────────────────────────── -->
+<h2>Favicons</h2>
+<div class="favicon-row">
+  <div class="favicon-item"><img src="favicons/favicon-16.png" width="16" height="16"><span>16px</span></div>
+  <div class="favicon-item"><img src="favicons/favicon-32.png" width="32" height="32"><span>32px</span></div>
+  <div class="favicon-item"><img src="favicons/apple-touch-icon.png" width="60" height="60"><span>180px (apple)</span></div>
+  <div class="favicon-item"><img src="favicons/favicon-192.png" width="64" height="64"><span>192px (android)</span></div>
+  <div class="favicon-item"><img src="favicons/favicon-512.png" width="80" height="80"><span>512px (PWA)</span></div>
+</div>
+
+<!-- ── DARK MODE ─────────────────────────────── -->
+<h2>Dark Mode</h2>
+<div class="dark-preview">
+  <h3>Dark theme colors (automatically lifted)</h3>
+  <p style="color:#a1aab8; margin:0.5rem 0 1rem">Add <code style="color:#fee26e">data-theme="dark"</code> or class <code style="color:#fee26e">.dark</code> to toggle.</p>
+  <div class="dark-palette">
+    <div class="dark-chip" style="background:#a89e95" title="#a89e95"></div>
+    <div class="dark-chip" style="background:#b48ffa" title="#b48ffa"></div>
+    <div class="dark-chip" style="background:#fc6b8f" title="#fc6b8f"></div>
+    <div class="dark-chip" style="background:#aad494" title="#aad494"></div>
+    <div class="dark-chip" style="background:#fee26e" title="#fee26e"></div>
+  </div>
+</div>
+
+<!-- ── USAGE ─────────────────────────────────── -->
+<h2>Quick Start</h2>
+<h3>Favicon &lt;head&gt; snippet</h3>
+<pre>&lt;link rel="icon" href="/favicons/favicon.ico"&gt;
+&lt;link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32.png"&gt;
+&lt;link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png"&gt;
+&lt;link rel="manifest" href="/site.webmanifest"&gt;
+&lt;meta name="theme-color" content="#36322f"&gt;</pre>
+
+<h3>Import CSS tokens</h3>
+<pre>@import url('./chorda-theme.css');
+
+h1 {
+  font-family: var(--font-headline);
+  font-weight: var(--headline-weight);   /* Goldman Sans Black */
+  color: var(--text-primary);
+}
+
+p {
+  font-family: var(--font-body);
+  font-weight: var(--body-weight);
+  color: var(--text-secondary);
+}
+
+.card {
+  background: var(--surface-base);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+}</pre>
+
+<h3>JSON tokens (JS / React / etc.)</h3>
+<pre>import tokens from './chorda-tokens.json';
+
+const theme = {
+  primary: tokens.color.primary.base,   // #36322f
+  fontHeadline: tokens.typography.fontFamily.headline,
+};</pre>
+
+</body>
+</html>

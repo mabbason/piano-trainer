@@ -1,7 +1,7 @@
 import type { Song } from "../models/song";
 import type { LoopRange } from "../utils/loop";
 
-const VIEWPORT_AHEAD_SEC = 4;
+export const VIEWPORT_AHEAD_SEC = 4;
 export const VIEWPORT_BEHIND_SEC = 0.5;
 
 function getKeyboardHeight(canvasHeight: number): number {

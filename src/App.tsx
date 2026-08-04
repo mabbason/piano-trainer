@@ -591,6 +591,7 @@ function App() {
             getState={playback.getState}
             visibleHands={visibleHands}
             loop={loop}
+            onSeek={handleSeek}
           />
           {finishedOverlay}
         </div>
@@ -654,6 +655,7 @@ function App() {
             getState={playback.getState}
             visibleHands={visibleHands}
             loop={loop}
+            onSeek={handleSeek}
           />
           {finishedOverlay}
         </div>

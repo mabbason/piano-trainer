@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Browser · Layout Concepts</title>
+<style>
+:root {
+  --n-950: #0a0d12;
+  --n-900: #141922;
+  --n-800: #272e3b;
+  --n-750: #2f3847;
+  --n-700: #3f4858;
+  --n-600: #5c6577;
+  --n-500: #7d8799;
+  --n-400: #a1aab8;
+  --n-300: #c4cad6;
+  --n-200: #dfe3ea;
+  --white: #f0f2f5;
+  --purple: #9768f8;
+  --purple-light: #b48ffa;
+  --purple-dark: #7a4ad6;
+  --yellow: #fdd63b;
+  --green: #8ec56f;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Goldman Sans', system-ui, -apple-system, sans-serif;
+  background: var(--n-950);
+  color: var(--n-300);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ─── Tab Bar ─────────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: var(--n-800);
+  border-bottom: 1px solid var(--n-700);
+  height: 52px;
+  flex-shrink: 0;
+}
+.tab-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--n-500);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-right: 6px;
+}
+.tab-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--n-700);
+  background: transparent;
+  color: var(--n-400);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+.tab-btn:hover { background: var(--n-700); color: var(--n-300); }
+.tab-btn.active { background: var(--purple); border-color: var(--purple); color: white; }
+
+/* ─── Layouts ──────────────────────────────────────────── */
+.layout {
+  display: none;
+  flex-direction: column;
+  height: calc(100dvh - 52px);
+  overflow: hidden;
+}
+.layout.active { display: flex; }
+
+/* ─── Shared: Search ───────────────────────────────────── */
+.search-wrap { position: relative; flex: 1; min-width: 0; }
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 34px;
+  background: var(--n-750);
+  border: 1px solid var(--n-700);
+  border-radius: 8px;
+  color: var(--white);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--purple-light); background: var(--n-800); }
+.search-input::placeholder { color: var(--n-500); }
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--n-500);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+/* ─── Shared: Sort ────────────────────────────────────── */
+.sort-select {
+  padding: 8px 10px;
+  background: var(--n-750);
+  border: 1px solid var(--n-700);
+  border-radius: 8px;
+  color: var(--n-300);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+  transition: border-color 0.15s;
+}
+.sort-select:focus { border-color: var(--purple-light); }
+
+/* ─── Shared: Chips ───────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--n-700);
+  background: transparent;
+  color: var(--n-400);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s;
+  line-height: 1;
+}
+.chip:hover { border-color: var(--n-500); color: var(--n-300); }
+.chip.active { background: var(--purple); border-color: var(--purple); color: white; }
+.chip-sep { width: 1px; height: 18px; background: var(--n-700); margin: 0 6px; flex-shrink: 0; }
+.chip-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--n-600);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── Shared: Song Card ───────────────────────────────── */
+.song-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--n-700);
+  cursor: pointer;
+  transition: background 0.1s;
+  user-select: none;
+}
+.song-card:hover { background: var(--n-800); }
+.song-card.selected { background: var(--n-750); border-left: 3px solid var(--purple); padding-left: 13px; }
+.song-info { flex: 1; min-width: 0; }
+.song-title {
+  font-weight: 600;
+  color: var(--white);
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.song-sub { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.song-artist { color: var(--n-500); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.song-genre-tag {
+  font-size: 10px;
+  color: var(--n-400);
+  background: var(--n-700);
+  border: 1px solid var(--n-600);
+  padding: 1px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.song-stats { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.song-diff { display: flex; gap: 2px; align-items: center; }
+.dd { width: 6px; height: 6px; border-radius: 50%; }
+.dd.on { background: var(--purple-light); }
+.dd.off { background: var(--n-700); }
+.song-dur { color: var(--n-600); font-size: 12px; font-variant-numeric: tabular-nums; min-width: 38px; text-align: right; }
+
+/* ─── Shared: Pagination ──────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--n-800);
+  border-top: 1px solid var(--n-700);
+  flex-shrink: 0;
+}
+.pg-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--n-700);
+  background: transparent;
+  color: var(--n-300);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+.pg-btn:hover:not(:disabled) { background: var(--n-700); }
+.pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.pg-info { flex: 1; text-align: center; color: var(--n-500); font-size: 12px; }
+
+/* ─── Shared: States ──────────────────────────────────── */
+.state-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 60px 20px;
+  color: var(--n-600);
+  font-size: 14px;
+  text-align: center;
+}
+.state-msg svg { color: var(--n-700); }
+
+/* ─── Shared: Info Bar ────────────────────────────────── */
+.info-bar {
+  padding: 5px 16px;
+  background: var(--n-900);
+  border-bottom: 1px solid var(--n-700);
+  font-size: 12px;
+  color: var(--n-500);
+  flex-shrink: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+
+/* ─── Shared: Top Bar Row ─────────────────────────────── */
+.top-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--n-800);
+  border-bottom: 1px solid var(--n-700);
+  flex-shrink: 0;
+}
+
+/* ─── LAYOUT A: Top Bar ───────────────────────────────── */
+#la-chips {
+  display: flex;
+  gap: 5px;
+  padding: 8px 14px;
+  background: var(--n-800);
+  border-bottom: 1px solid var(--n-700);
+  overflow-x: auto;
+  scrollbar-width: none;
+  align-items: center;
+  flex-shrink: 0;
+}
+#la-chips::-webkit-scrollbar { display: none; }
+#la-list { flex: 1; overflow-y: auto; }
+
+/* ─── LAYOUT B: Sidebar ───────────────────────────────── */
+#lb-body { display: flex; flex: 1; overflow: hidden; }
+#lb-sidebar {
+  width: 196px;
+  min-width: 196px;
+  background: var(--n-800);
+  border-right: 1px solid var(--n-700);
+  overflow-y: auto;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+#lb-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+#lb-list { flex: 1; overflow-y: auto; }
+
+.sb-heading {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--n-500);
+  margin-bottom: 8px;
+}
+.sb-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: pointer;
+  color: var(--n-400);
+  font-size: 13px;
+  transition: color 0.1s;
+}
+.sb-option:hover { color: var(--n-200); }
+.sb-option input[type="radio"] { accent-color: var(--purple-light); cursor: pointer; }
+.sb-clear {
+  margin-top: 4px;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid var(--n-700);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--n-500);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.sb-clear:hover { background: var(--n-700); color: var(--n-300); }
+
+/* ─── LAYOUT C: Collapsible ───────────────────────────── */
+#lc-filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--n-700);
+  background: transparent;
+  color: var(--n-400);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s;
+  flex-shrink: 0;
+}
+#lc-filter-toggle:hover { background: var(--n-700); color: var(--n-300); }
+#lc-filter-toggle.has-active { border-color: var(--purple-light); color: var(--purple-light); }
+.filter-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--purple);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+#lc-filter-panel {
+  background: var(--n-800);
+  border-bottom: 1px solid var(--n-700);
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.2s ease, padding 0.2s ease;
+  flex-shrink: 0;
+  padding: 0 16px;
+}
+#lc-filter-panel.open {
+  max-height: 180px;
+  padding: 10px 16px 12px;
+}
+.lc-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.lc-row:last-child { margin-bottom: 0; }
+.lc-row-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--n-500);
+  padding-top: 5px;
+  min-width: 62px;
+  flex-shrink: 0;
+}
+.lc-row-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+#lc-list { flex: 1; overflow-y: auto; }
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <span class="tab-label">Layout Concepts</span>
+  <button class="tab-btn active" onclick="switchTab('a')">A — Top Bar</button>
+  <button class="tab-btn" onclick="switchTab('b')">B — Sidebar</button>
+  <button class="tab-btn" onclick="switchTab('c')">C — Collapsible</button>
+</div>
+
+<!-- ═══════════ LAYOUT A ═══════════ -->
+<div id="layout-a" class="layout active">
+  <div class="top-bar">
+    <div class="search-wrap">
+      <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input class="search-input" id="la-search" placeholder="Search songs, composers..." oninput="onSearch('a', this.value)">
+    </div>
+    <select class="sort-select" id="la-sort" onchange="onSort('a', this.value)">
+      <option value="popular">Popular</option>
+      <option value="title">A → Z</option>
+      <option value="diff-asc">Easiest First</option>
+      <option value="diff-desc">Hardest First</option>
+      <option value="dur-asc">Shortest First</option>
+      <option value="dur-desc">Longest First</option>
+    </select>
+  </div>
+  <div id="la-chips"></div>
+  <div class="info-bar" id="la-info"></div>
+  <div id="la-list"></div>
+  <div class="pagination" id="la-pg"></div>
+</div>
+
+<!-- ═══════════ LAYOUT B ═══════════ -->
+<div id="layout-b" class="layout">
+  <div id="lb-body">
+    <div id="lb-sidebar">
+      <div>
+        <div class="sb-heading">Genre</div>
+        <div id="lb-genres"></div>
+      </div>
+      <div>
+        <div class="sb-heading">Difficulty</div>
+        <div id="lb-diff">
+          <label class="sb-option"><input type="radio" name="lb-d" value="" onchange="onDifficulty('b', null)" checked> All</label>
+          <label class="sb-option"><input type="radio" name="lb-d" value="1" onchange="onDifficulty('b',1)"> Beginner</label>
+          <label class="sb-option"><input type="radio" name="lb-d" value="2" onchange="onDifficulty('b',2)"> Easy</label>
+          <label class="sb-option"><input type="radio" name="lb-d" value="3" onchange="onDifficulty('b',3)"> Intermediate</label>
+          <label class="sb-option"><input type="radio" name="lb-d" value="4" onchange="onDifficulty('b',4)"> Advanced</label>
+          <label class="sb-option"><input type="radio" name="lb-d" value="5" onchange="onDifficulty('b',5)"> Expert</label>
+        </div>
+      </div>
+      <div>
+        <div class="sb-heading">Duration</div>
+        <div>
+          <label class="sb-option"><input type="radio" name="lb-dur" value="" onchange="onDuration('b', null)" checked> All</label>
+          <label class="sb-option"><input type="radio" name="lb-dur" value="short" onchange="onDuration('b','short')"> Short (&lt;2min)</label>
+          <label class="sb-option"><input type="radio" name="lb-dur" value="medium" onchange="onDuration('b','medium')"> Medium (2–4min)</label>
+          <label class="sb-option"><input type="radio" name="lb-dur" value="long" onchange="onDuration('b','long')"> Long (4+min)</label>
+        </div>
+      </div>
+      <button class="sb-clear" onclick="clearFilters('b')">✕ Clear All Filters</button>
+    </div>
+    <div id="lb-main">
+      <div class="top-bar">
+        <div class="search-wrap">
+          <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input class="search-input" id="lb-search" placeholder="Search songs, composers..." oninput="onSearch('b', this.value)">
+        </div>
+        <select class="sort-select" id="lb-sort" onchange="onSort('b', this.value)">
+          <option value="popular">Popular</option>
+          <option value="title">A → Z</option>
+          <option value="diff-asc">Easiest First</option>
+          <option value="diff-desc">Hardest First</option>
+          <option value="dur-asc">Shortest First</option>
+          <option value="dur-desc">Longest First</option>
+        </select>
+      </div>
+      <div class="info-bar" id="lb-info"></div>
+      <div id="lb-list"></div>
+      <div class="pagination" id="lb-pg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ LAYOUT C ═══════════ -->
+<div id="layout-c" class="layout">
+  <div class="top-bar">
+    <div class="search-wrap">
+      <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input class="search-input" id="lc-search" placeholder="Search songs, composers..." oninput="onSearch('c', this.value)">
+    </div>
+    <select class="sort-select" id="lc-sort" onchange="onSort('c', this.value)">
+      <option value="popular">Popular</option>
+      <option value="title">A → Z</option>
+      <option value="diff-asc">Easiest First</option>
+      <option value="diff-desc">Hardest First</option>
+      <option value="dur-asc">Shortest First</option>
+      <option value="dur-desc">Longest First</option>
+    </select>
+    <button id="lc-filter-toggle" onclick="toggleFiltersC()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      <span id="lc-toggle-text">Filters</span>
+      <span id="lc-badge" class="filter-count-badge" style="display:none"></span>
+    </button>
+  </div>
+  <div id="lc-filter-panel">
+    <div class="lc-row">
+      <span class="lc-row-label">Genre</span>
+      <div class="lc-row-chips" id="lc-genre-chips"></div>
+    </div>
+    <div class="lc-row">
+      <span class="lc-row-label">Difficulty</span>
+      <div class="lc-row-chips" id="lc-diff-chips">
+        <button class="chip" data-val="1" onclick="onDifficulty('c',1)">Beginner</button>
+        <button class="chip" data-val="2" onclick="onDifficulty('c',2)">Easy</button>
+        <button class="chip" data-val="3" onclick="onDifficulty('c',3)">Intermediate</button>
+        <button class="chip" data-val="4" onclick="onDifficulty('c',4)">Advanced</button>
+        <button class="chip" data-val="5" onclick="onDifficulty('c',5)">Expert</button>
+      </div>
+    </div>
+    <div class="lc-row">
+      <span class="lc-row-label">Duration</span>
+      <div class="lc-row-chips" id="lc-dur-chips">
+        <button class="chip" data-val="short" onclick="onDuration('c','short')">&lt;2 min</button>
+        <button class="chip" data-val="medium" onclick="onDuration('c','medium')">2–4 min</button>
+        <button class="chip" data-val="long" onclick="onDuration('c','long')">4+ min</button>
+      </div>
+    </div>
+  </div>
+  <div class="info-bar" id="lc-info"></div>
+  <div id="lc-list"></div>
+  <div class="pagination" id="lc-pg"></div>
+</div>
+
+<script>
+// ── Constants ──────────────────────────────────────────────────────
+const PAGE_SIZE = 10;
+
+// ── State ──────────────────────────────────────────────────────────
+const S = {
+  a: { search:'', genre:null, difficulty:null, duration:null, sort:'popular', page:0, results:[], loading:false, selected:null },
+  b: { search:'', genre:null, difficulty:null, duration:null, sort:'popular', page:0, results:[], loading:false, selected:null },
+  c: { search:'', genre:null, difficulty:null, duration:null, sort:'popular', page:0, results:[], loading:false, selected:null, open:false }
+};
+
+let genres = [];
+let searchTimers = {};
+
+// ── Tab ────────────────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', 'abc'[i] === id));
+  document.querySelectorAll('.layout').forEach((l,i) => l.classList.toggle('active', 'abc'[i] === id));
+  if (!S[id].results.length && !S[id].loading) fetchSongs(id);
+}
+
+// ── Helpers ────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDur(sec) {
+  const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function dots(d) {
+  let h = '';
+  for (let i = 1; i <= 5; i++) h += `<span class="dd ${i<=d?'on':'off'}"></span>`;
+  return h;
+}
+
+function filterDur(sec, dur) {
+  if (!dur) return true;
+  if (dur === 'short') return sec < 120;
+  if (dur === 'medium') return sec >= 120 && sec < 240;
+  return sec >= 240;
+}
+
+function sortFn(s) {
+  const fns = {
+    popular: (a,b) => b.note_count - a.note_count,
+    title:   (a,b) => a.title.localeCompare(b.title),
+    'diff-asc':  (a,b) => a.difficulty - b.difficulty,
+    'diff-desc': (a,b) => b.difficulty - a.difficulty,
+    'dur-asc':   (a,b) => a.duration_sec - b.duration_sec,
+    'dur-desc':  (a,b) => b.duration_sec - a.duration_sec,
+  };
+  return fns[s] || fns.popular;
+}
+
+function getProcessed(id) {
+  const s = S[id];
+  return [...s.results].filter(r => filterDur(r.duration_sec, s.duration)).sort(sortFn(s.sort));
+}
+
+function filterCount(id) {
+  const s = S[id];
+  return [s.genre, s.difficulty, s.duration].filter(Boolean).length;
+}
+
+// ── Fetch ──────────────────────────────────────────────────────────
+async function fetchSongs(id) {
+  const s = S[id];
+  s.loading = true;
+  renderList(id);
+
+  const p = new URLSearchParams({ limit: '200' });
+  if (s.search) p.set('q', s.search);
+  if (s.genre) p.set('genre', s.genre);
+  if (s.difficulty) p.set('difficulty', String(s.difficulty));
+
+  try {
+    const r = await fetch(`/api/songs/search?${p}`);
+    s.results = await r.json();
+  } catch {
+    s.results = [];
+  }
+  s.loading = false;
+  s.page = 0;
+  s.selected = null;
+  renderAll(id);
+}
+
+async function loadGenres() {
+  try {
+    const r = await fetch('/api/songs/genres');
+    genres = await r.json();
+  } catch { genres = []; }
+  renderGenreControls();
+}
+
+// ── Render: Genre controls ─────────────────────────────────────────
+function renderGenreControls() {
+  // Layout A chips
+  const topGenres = genres.slice(0, 12);
+  document.getElementById('la-chips').innerHTML =
+    `<span class="chip-label">Genre</span>` +
+    topGenres.map(g => `<button class="chip${S.a.genre===g.genre?' active':''}" onclick="onGenre('a','${esc(g.genre)}')">${esc(g.genre)}</button>`).join('') +
+    `<span class="chip-sep"></span><span class="chip-label">Difficulty</span>` +
+    [1,2,3,4,5].map((d,i) => {
+      const lbl = ['Beginner','Easy','Intermediate','Advanced','Expert'][i];
+      return `<button class="chip${S.a.difficulty===d?' active':''}" onclick="onDifficulty('a',${d})">${lbl}</button>`;
+    }).join('') +
+    `<span class="chip-sep"></span><span class="chip-label">Duration</span>` +
+    ['short','medium','long'].map((d,i) => {
+      const lbl = ['&lt;2 min','2–4 min','4+ min'][i];
+      return `<button class="chip${S.a.duration===d?' active':''}" onclick="onDuration('a','${d}')">${lbl}</button>`;
+    }).join('');
+
+  // Layout B sidebar genres
+  document.getElementById('lb-genres').innerHTML =
+    `<label class="sb-option"><input type="radio" name="lb-g" value="" onchange="onGenre('b',null)"${!S.b.genre?' checked':''}> All Genres</label>` +
+    genres.slice(0,10).map(g =>
+      `<label class="sb-option"><input type="radio" name="lb-g" value="${esc(g.genre)}" onchange="onGenre('b','${esc(g.genre)}')"${S.b.genre===g.genre?' checked':''}> ${esc(g.genre)}</label>`
+    ).join('');
+
+  // Layout C genre chips
+  document.getElementById('lc-genre-chips').innerHTML =
+    genres.slice(0,10).map(g =>
+      `<button class="chip${S.c.genre===g.genre?' active':''}" data-genre="${esc(g.genre)}" onclick="onGenre('c','${esc(g.genre)}')">${esc(g.genre)}</button>`
+    ).join('');
+}
+
+// ── Render: List ──────────────────────────────────────────────────
+function renderList(id) {
+  const listEl = document.getElementById(`l${id}-list`);
+  const pgEl   = document.getElementById(`l${id}-pg`);
+  const infoEl = document.getElementById(`l${id}-info`);
+  const s = S[id];
+
+  if (s.loading) {
+    listEl.innerHTML = `<div class="state-msg">Loading...</div>`;
+    pgEl.innerHTML = '';
+    infoEl.textContent = '';
+    return;
+  }
+
+  const processed = getProcessed(id);
+  const total = processed.length;
+  const start = s.page * PAGE_SIZE;
+  const slice = processed.slice(start, start + PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  if (slice.length === 0) {
+    listEl.innerHTML = `<div class="state-msg">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      No songs match your filters
+    </div>`;
+  } else {
+    listEl.innerHTML = slice.map(song => `
+      <div class="song-card${s.selected===song.id?' selected':''}" onclick="selectSong('${id}','${esc(song.id)}')">
+        <div class="song-info">
+          <div class="song-title">${esc(song.title)}</div>
+          <div class="song-sub">
+            <span class="song-artist">${esc(song.artist)}</span>
+            <span class="song-genre-tag">${esc(song.genre)}</span>
+          </div>
+        </div>
+        <div class="song-stats">
+          <div class="song-diff">${dots(song.difficulty)}</div>
+          <div class="song-dur">${fmtDur(song.duration_sec)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Info bar
+  const fc = filterCount(id);
+  const searchNote = s.search ? ` for "${esc(s.search)}"` : '';
+  const filterNote = fc > 0 ? ` · ${fc} filter${fc>1?'s':''} active` : '';
+  infoEl.textContent = total > 0 ? `${total} songs${searchNote}${filterNote}` : `0 songs${searchNote}`;
+
+  // Pagination
+  const end = Math.min(start + PAGE_SIZE, total);
+  pgEl.innerHTML = total === 0 ? '' : `
+    <button class="pg-btn" onclick="onPage('${id}',-1)" ${s.page===0?'disabled':''}>← Prev</button>
+    <span class="pg-info">${start+1}–${end} of ${total}</span>
+    <button class="pg-btn" onclick="onPage('${id}',1)" ${s.page>=totalPages-1?'disabled':''}>Next →</button>
+  `;
+}
+
+// ── Render: Layout C badge ─────────────────────────────────────────
+function updateCBadge() {
+  const fc = filterCount('c');
+  const badge = document.getElementById('lc-badge');
+  const btn   = document.getElementById('lc-filter-toggle');
+  badge.textContent = fc;
+  badge.style.display = fc > 0 ? '' : 'none';
+  btn.classList.toggle('has-active', fc > 0);
+}
+
+// ── Render: All ────────────────────────────────────────────────────
+function renderAll(id) {
+  renderList(id);
+  if (id === 'a') renderGenreControls();
+  if (id === 'c') {
+    // Update chip states
+    document.querySelectorAll('#lc-genre-chips .chip').forEach(c =>
+      c.classList.toggle('active', c.dataset.genre === S.c.genre));
+    document.querySelectorAll('#lc-diff-chips .chip').forEach(c =>
+      c.classList.toggle('active', parseInt(c.dataset.val) === S.c.difficulty));
+    document.querySelectorAll('#lc-dur-chips .chip').forEach(c =>
+      c.classList.toggle('active', c.dataset.val === S.c.duration));
+    updateCBadge();
+  }
+}
+
+// ── Song selection ─────────────────────────────────────────────────
+function selectSong(id, songId) {
+  S[id].selected = S[id].selected === songId ? null : songId;
+  renderList(id);
+}
+
+// ── Event Handlers ─────────────────────────────────────────────────
+function onSearch(id, val) {
+  clearTimeout(searchTimers[id]);
+  searchTimers[id] = setTimeout(() => {
+    S[id].search = val.trim();
+    fetchSongs(id);
+  }, 320);
+}
+
+function onGenre(id, genre) {
+  if (id === 'b') {
+    S[id].genre = genre || null;
+  } else {
+    // Chips: toggle same value off
+    S[id].genre = S[id].genre === genre ? null : genre;
+  }
+  fetchSongs(id);
+}
+
+function onDifficulty(id, diff) {
+  if (id === 'b') {
+    S[id].difficulty = diff;
+  } else {
+    S[id].difficulty = S[id].difficulty === diff ? null : diff;
+  }
+  fetchSongs(id);
+}
+
+function onDuration(id, dur) {
+  if (id === 'b') {
+    S[id].duration = dur || null;
+  } else {
+    S[id].duration = S[id].duration === dur ? null : dur;
+  }
+  S[id].page = 0;
+  renderAll(id);
+}
+
+function onSort(id, val) {
+  S[id].sort = val;
+  S[id].page = 0;
+  renderList(id);
+}
+
+function onPage(id, dir) {
+  const processed = getProcessed(id);
+  const totalPages = Math.max(1, Math.ceil(processed.length / PAGE_SIZE));
+  S[id].page = Math.max(0, Math.min(totalPages - 1, S[id].page + dir));
+  document.getElementById(`l${id}-list`).scrollTop = 0;
+  renderList(id);
+}
+
+function clearFilters(id) {
+  S[id].genre = null;
+  S[id].difficulty = null;
+  S[id].duration = null;
+  if (id === 'b') {
+    document.querySelector('input[name="lb-g"][value=""]').checked = true;
+    document.querySelector('input[name="lb-d"][value=""]').checked = true;
+    document.querySelector('input[name="lb-dur"][value=""]').checked = true;
+  }
+  fetchSongs(id);
+}
+
+function toggleFiltersC() {
+  S.c.open = !S.c.open;
+  document.getElementById('lc-filter-panel').classList.toggle('open', S.c.open);
+  document.getElementById('lc-toggle-text').textContent = S.c.open ? 'Hide' : 'Filters';
+}
+
+// ── Init ───────────────────────────────────────────────────────────
+(async () => {
+  await loadGenres();
+  await fetchSongs('a');
+})();
+</script>
+</body>
+</html>
